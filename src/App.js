@@ -1,25 +1,51 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import { Switch, Route } from "react-router-dom";
 
-function App() {
+import data from "./data/store-items.json";
+
+import Cart from "./pages/Cart";
+import Home from "./pages/Home";
+import ProductDetail from "./pages/ProductDetail";
+
+const App = (props) => {
+  const [order, setOrder] = useState({});
+  const [orders, setOrders] = useState([]);
+
+  const handleAddToCart = (item, count) => {
+    setOrder({ ...item, count });
+  };
+
+  useEffect(() => {
+    setOrders([...orders, order]);
+  }, [order]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Route
+        exact
+        path="/product/:id"
+        render={(props) => {
+          return (
+            <ProductDetail {...props} items={data} onClick={handleAddToCart} />
+          );
+        }}
+      />
+      <Route
+        exact
+        path="/cart"
+        render={(props) => {
+          return <Cart {...props} orders={orders} />;
+        }}
+      />
+      <Route
+        exact
+        path="/"
+        render={(props) => {
+          return <Home {...props} items={data} />;
+        }}
+      />
+    </>
   );
-}
+};
 
 export default App;
